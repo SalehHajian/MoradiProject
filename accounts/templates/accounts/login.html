@@ -1,0 +1,14 @@
+{% extends '_base.html' %}
+{% block title %}
+    LOGIN Title
+{% endblock %}
+
+{% block body %}
+    <form method="post" >
+        {% csrf_token %}
+{#        {{ form.as_p }}#}
+        <input type="text" name="user" placeholder="نام کاربری یا ایمیل خود را وارد نمایید">
+        <input type="password" name="password" placeholder="رمز عبور خود را وارد نمایید">
+    <button type="submit">Login</button>
+    </form>
+{% endblock %}

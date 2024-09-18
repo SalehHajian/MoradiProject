@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+{% block title %}
+    Update Title
+{% endblock %}
+
+{% block body %}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
+    <button type="submit">Update User</button>
+    </form>
+{% endblock %}

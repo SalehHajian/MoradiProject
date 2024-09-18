@@ -1,0 +1,14 @@
+{% extends '_base.html' %}
+{% block title %}
+    Home Title
+{% endblock %}
+
+{% block body %}
+    <h1> Welcome to my page </h1>
+    {% for cat in category %}
+        <a href="{{ cat.get_absolute_url }}">
+            <h2>{{ cat.name }}</h2>
+        </a>
+        <img src="{{ cat.image.url }}" width="200" alt="{{ cat.name }}" title="{{ cat.name }}">
+    {% endfor %}
+{% endblock %}

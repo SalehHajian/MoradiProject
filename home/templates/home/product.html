@@ -1,0 +1,48 @@
+{% extends '_base.html' %}
+{% block title %}
+    Product Title
+{% endblock %}
+
+{% block body %}
+    <form method="post" action="{% url 'home:product_search' %}">
+        {% csrf_token %}
+        {{ form }}
+    <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+
+
+    <h1> Welcome to All Product page </h1>
+    {% for data in category %}
+         <!-- Example single danger button -->
+        <a href="{{ data.get_absolute_url }}">{{ data.name }}</a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+
+            </button>
+            <ul class="dropdown-menu">
+                {% for info in data.sub.all  %}
+                    <li><a class="dropdown-item" href="{{ info.get_absolute_url }}">{{ info.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    {% endfor %}
+
+
+
+
+    {% for product in products %}
+
+       <a href="{% url 'home:detail' product.id %}">
+            <h2>{{ product.name }}</h2>
+            <img src="{{ product.image.url }}" width="200" alt="{{ product.name }}" title="{{ product.name }}">
+        </a>
+        {% if product.discount %}
+            <h4 style="text-decoration: line-through">{{ product.unit_price }}</h4>
+            <h3>{{ product.total_price }}</h3>
+        {% else %}
+            <h3>{{ product.total_price }}</h3>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

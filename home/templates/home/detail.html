@@ -1,0 +1,134 @@
+{% extends '_base.html' %}
+{% block title %}
+    detail Title
+{% endblock %}
+
+{% block body %}
+    <h1> Welcome to my Product page </h1>
+
+    <h2>{{ product.name }}</h2>
+    <h4>{{ product.average }}</h4>
+    <img src="{{ product.image.url }}" width="200" alt="{{ product.name }}" title="{{ product.name }}">
+    <p>{{ product.information }}</p>
+    <hr>
+    <p>گالری تصاویر :</p>
+    {% for image in images %}
+    	<img src="{{ image.image.url }}" width="200" alt="{{ image.name }}">
+    {% endfor %}
+
+    <hr>
+    Like OR DisLike:
+    <h4>Count Like : {{ product.total_like }}</h4>
+    {% if request.user.is_authenticated %}
+
+            <p>
+                <a href="{% url 'home:product_like' product.id %}"
+                        class="{% if is_unlike %} disabled {% endif %}">like</a>
+            </p>
+
+            <p>
+            <h2>unlike : {{ product.total_unlike }}</h2>
+                <a href="{% url 'home:product_unlike' product.id %}"
+                    class="{% if is_like %} disabled {% endif %}"
+                >dislike</a>
+
+            </p>
+
+    {% endif %}
+            <hr>
+            <div class="cart bg-danger p-3 m-4">
+                {% if product.status == 'Size' %}
+                    <h4>Your Choice Size  : {{ variants.size_variant }} ||| Price : {{ variants.total_price }}</h4>
+                {% elif product.status == 'Color' %}
+                    <h4>Your Choice Color  : {{ variants.color_variant }} ||| Price : {{ variants.total_price }}</h4>
+                {% endif %}
+            </div>
+            <hr>
+            <div class="cart">
+                {% if product.status != 'None' %}
+                    
+                    <form method="post" action="{% url 'cart:cart_add' product.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="select" value="{{variants.id}}">
+                        <input type="number" name="quantity" min="1" value="1" max="{{ variants.amount }}">
+                        <button class="btn btn-info" type="submit">سبد خرید</button>
+                    </form>
+
+                {% else %}
+                    <form method="post" action="{% url 'cart:cart_add' product.id %}">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" min="1" value="1" max="{{ product.amount }}"
+                            required oninvalid="setCustomValidity(تعداد حداکثر می بایست {{ product.amount }} باشد)"
+                        >
+                        <button class="btn btn-info" type="submit">سبد خرید</button>
+                    </form> 
+                {% endif %}
+            </div>
+
+
+    <hr>
+    {% if product.status == 'Size' %}
+        <form method="post">
+            {% csrf_token %}
+            {% for data in variant %}
+                <input type="radio" value="{{ data.id }}" {% if variants.id == data.id %} checked {% endif %}
+                       name="select" onchange="this.form.submit()">
+                <a href="" style="text-decoration: none">{{ data.size_variant }}</a>
+
+
+            {% endfor %}
+        </form>
+    {% endif %}
+
+    {% if product.status == 'Color' %}
+        <form method="post">
+            {% csrf_token %}
+            {% for data in variant %}
+                <input type="radio" value="{{ data.id }}" {% if variants.id == data.id %} checked {% endif %}
+                       name="select" onchange="this.form.submit()">
+                <a href="" style="text-decoration: none">{{ data.color_variant }}</a>
+
+
+            {% endfor %}
+        </form>
+    {% endif %}
+
+    <hr>
+    <p>محصولات مشابه</p>
+
+    {% for tag in similar %}
+        <a href="{% url 'home:detail' tag.id %}">
+            <img src="{{ tag.image.url }}" alt="" title="" width="200">
+        </a>
+    {% endfor %}
+
+    <hr>
+    <div>
+        <p>نظرات کاربران </p>
+    {% if user.is_authenticated %}
+    {% for com in comment %}
+        print(com
+        <p>{{ com.comment }}</p>
+        <small>{{ com.rate }}</small>
+        <form method="post" action="{% url 'home:product_reply' product.id com.id %}">
+            {% csrf_token %}
+            <textarea name="comment" id="comment" placeholder="reply...." rows="4"></textarea>
+        <button type="submit">Send Reply</button>
+        </form>
+    {% endfor %}
+    <form method="post" action="{% url 'home:product_comment' product.id %}">
+        {% csrf_token %}
+        <textarea placeholder="comment ..." name="comment" id="comment" rows="4"
+            required oninvalid="setCustomeValidity('لطفا نظر خود را وارد نمایید')"
+        >
+
+        </textarea>
+    <button type="submit">Send Comment</button>
+    </form>
+
+{% endif %}
+    </div>
+
+{% endblock %}
+
+<br><br><br><br><br><br><br><br>
